@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tirzz Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --surface: #0e0e16;
+    --card: #13131e;
+    --border: #1e1e2e;
+    --accent: #7c6aff;
+    --accent2: #b8aeff;
+    --pink: #ff6a9e;
+    --text: #eeeaf8;
+    --muted: #7070a0;
+    --success: #50e3a4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Mulish', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,106,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,106,158,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid pattern */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 460px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 52px 0 40px;
+  }
+
+  .store-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(124,106,255,0.35);
+    background: rgba(124,106,255,0.08);
+    border-radius: 100px;
+    padding: 5px 14px;
+    margin-bottom: 18px;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .store-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    animation: fadeDown 0.5s 0.1s ease both;
+  }
+
+  .store-name .t { color: var(--accent2); }
+  .store-name .ir { color: var(--text); }
+  .store-name .zz {
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .store-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    letter-spacing: 0.3px;
+    animation: fadeDown 0.5s 0.2s ease both;
+  }
+
+  /* Floating orb */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+  }
+  .orb1 { width: 180px; height: 180px; background: rgba(124,106,255,0.15); top: -40px; right: -30px; animation-delay: 0s; }
+  .orb2 { width: 120px; height: 120px; background: rgba(255,106,158,0.12); top: 60px; left: -20px; animation-delay: 3s; }
+
+  /* Section title */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Product cards */
+  .products {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(124,106,255,0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .product-card:hover {
+    border-color: rgba(124,106,255,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(124,106,255,0.1);
+  }
+
+  .product-card:hover::before { opacity: 1; }
+
+  .product-card.featured {
+    border-color: rgba(124,106,255,0.3);
+    background: linear-gradient(135deg, rgba(124,106,255,0.08), rgba(255,106,158,0.04));
+  }
+
+  .product-card.featured::after {
+    content: '★ POPULER';
+    position: absolute;
+    top: 12px; right: 14px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--accent2);
+    background: rgba(124,106,255,0.15);
+    border: 1px solid rgba(124,106,255,0.3);
+    border-radius: 100px;
+    padding: 3px 8px;
+  }
+
+  .product-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .product-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue { background: rgba(124,106,255,0.15); }
+  .icon-green { background: rgba(80,227,164,0.12); }
+  .icon-pink { background: rgba(255,106,158,0.12); }
+  .icon-yellow { background: rgba(255,200,80,0.12); }
+  .icon-orange { background: rgba(255,140,50,0.12); }
+
+  .product-info {}
+
+  .product-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .product-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .product-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent2), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+
+  /* Order section */
+  .order-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.5s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .order-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,106,255,0.5), transparent);
+  }
+
+  .order-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .selected-display {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .selected-display .sel-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .selected-display .sel-price {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  input, textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'Mulish', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+
+  input:focus, textarea:focus {
+    border-color: rgba(124,106,255,0.5);
+    box-shadow: 0 0 0 3px rgba(124,106,255,0.08);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.6; }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .btn-order {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #9b6aff);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-order::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  }
+
+  .btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(124,106,255,0.4);
+  }
+
+  .btn-order:active { transform: translateY(0); }
+
+  /* Info box */
+  .info-box {
+    background: rgba(124,106,255,0.06);
+    border: 1px solid rgba(124,106,255,0.2);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.6s ease both;
+  }
+
+  .info-box p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .info-box p span {
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success { border-color: rgba(80,227,164,0.4); color: var(--success); }
+  .toast.error { border-color: rgba(255,106,158,0.4); color: var(--pink); }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .product-card:nth-child(1) { animation-delay: 0.3s; }
+  .product-card:nth-child(2) { animation-delay: 0.35s; }
+  .product-card:nth-child(3) { animation-delay: 0.4s; }
+  .product-card:nth-child(4) { animation-delay: 0.45s; }
+  .product-card:nth-child(5) { animation-delay: 0.5s; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    animation: fadeUp 0.5s 0.7s ease both;
+  }
+
+  .footer span { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <header>
+    <div class="store-tag">✦ Official Store</div>
+    <div class="store-name">
+      <span class="t">T</span><span class="ir">ir</span><span class="zz">zz</span>
+    </div>
+    <p class="store-desc">Layanan digital terpercaya · Proses cepat & aman</p>
+  </header>
+
+  <div class="section-title">Pilih Paket</div>
+
+  <div class="products">
+
+    <div class="product-card" onclick="selectProduct('1 Hari', 2000, this)">
+      <div class="product-left">
+        <div class="product-icon icon-blue">⏱️</div>
+        <div class="product-info">
+          <div class="product-name">1 Hari</div>
+          <div class="product-desc">Akses penuh selama 24 jam</div>
+        </div>
+      </div>
+      <div class="product-price">Rp 2K</div>
+    </div>
+
+    <div class="product-card" onclick="selectProduct('Permanen', 15000, this)">
+      <div class="product-left">
+        <div class="product-icon icon-green">♾️</div>
+        <div class="product-info">
+          <div class="product-name">Permanen</div>
+          <div class="product-desc">Akses selamanya tanpa batas</div>
+        </div>
+      </div>
+      <div class="product-price">Rp 15K</div>
+    </div>
+
+    <div class="product-card featured" onclick="selectProduct('Full Up', 25000, this)">
+      <div class="product-left">
+        <div class="product-icon icon-pink">⚡</div>
+        <div class="product-info">
+          <div class="product-name">Full Up</div>
+          <div class="product-desc">Semua fitur terbuka penuh</div>
+        </div>
+      </div>
+      <div class="product-price">Rp 25K</div>
+    </div>
+
+    <div class="product-card" onclick="selectProduct('Owner APK', 35000, this)">
+      <div class="product-left">
+        <div class="product-icon icon-yellow">👑</div>
+        <div class="product-info">
+          <div class="product-name">Owner APK</div>
+          <div class="product-desc">Hak penuh sebagai pemilik aplikasi</div>
+        </div>
+      </div>
+      <div class="product-price">Rp 35K</div>
+    </div>
+
+    <div class="product-card" onclick="selectProduct('Open Pembuatan APK', 40000, this)">
+      <div class="product-left">
+        <div class="product-icon icon-orange">🛠️</div>
+        <div class="product-info">
+          <div class="product-name">Open Pembuatan APK</div>
+          <div class="product-desc">Custom nama, foto & video sesuai request</div>
+        </div>
+      </div>
+      <div class="product-price">Rp 40K</div>
+    </div>
+
+  </div>
+
+  <!-- Order Form -->
+  <div class="order-box">
+    <div class="order-title">📋 Form Pemesanan</div>
+
+    <div class="selected-display" id="selectedDisplay">
+      <span style="color:var(--muted);font-size:13px">← Pilih paket di atas dulu</span>
+    </div>
+
+    <input type="text" id="namaInput" placeholder="Nama / Username kamu" />
+    <input type="text" id="kontakInput" placeholder="No. WhatsApp / Kontak" />
+    <textarea id="catatanInput" placeholder="Catatan tambahan (opsional)&#10;Untuk APK: tulis nama, link foto/video..."></textarea>
+
+    <button class="btn-order" onclick="submitOrder()">✦ Pesan Sekarang</button>
+  </div>
+
+  <div class="info-box">
+    <p>
+      <span>✦ Pembayaran</span> via DANA / OVO / GoPay / Transfer Bank<br>
+      <span>✦ Proses</span> cepat setelah konfirmasi pembayaran<br>
+      <span>✦ Garansi</span> uang kembali jika tidak diproses dalam 1x24 jam
+    </p>
+  </div>
+
+  <div class="footer">© 2025 <span>Tirzz Store</span> · All rights reserved</div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastMsg">Berhasil!</span>
+</div>
+
+<script>
+  let selected = null;
+
+  function selectProduct(name, price, el) {
+    document.querySelectorAll('.product-card').forEach(c => {
+      c.style.borderColor = '';
+      c.style.background = '';
+    });
+
+    el.style.borderColor = 'rgba(124,106,255,0.7)';
+    el.style.background = 'rgba(124,106,255,0.1)';
+
+    selected = { name, price };
+
+    const display = document.getElementById('selectedDisplay');
+    display.innerHTML = `
+      <span class="sel-name">${name}</span>
+      <span class="sel-price">Rp ${price.toLocaleString('id-ID')}</span>
+    `;
+  }
+
+  function submitOrder() {
+    const nama = document.getElementById('namaInput').value.trim();
+    const kontak = document.getElementById('kontakInput').value.trim();
+
+    if (!selected) { showToast('⚠️ Pilih paket dulu!', 'error'); return; }
+    if (!nama) { showToast('⚠️ Nama wajib diisi!', 'error'); return; }
+    if (!kontak) { showToast('⚠️ Kontak wajib diisi!', 'error'); return; }
+
+    const catatan = document.getElementById('catatanInput').value.trim();
+
+    const msg = encodeURIComponent(
+      `✦ *PESANAN TIRZZ STORE* ✦\n\n` +
+      `Paket: ${selected.name}\n` +
+      `Harga: Rp ${selected.price.toLocaleString('id-ID')}\n` +
+      `Nama: ${nama}\n` +
+      `Kontak: ${kontak}\n` +
+      (catatan ? `Catatan: ${catatan}\n` : '') +
+      `\nMohon konfirmasi pesanan saya 🙏`
+    );
+
+    showToast('✓ Mengalihkan ke WhatsApp...', 'success');
+
+    setTimeout(() => {
+      window.open(`https://wa.me/6287769375859?text=${msg}`, '_blank');
+    }, 800);
+  }
+
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.className = 'toast ' + type + ' show';
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
